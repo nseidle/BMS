@@ -2138,9 +2138,7 @@ design rules under a new name.</description>
 <element name="JP6" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="36.83"/>
 <element name="JP8" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="39.37"/>
 <element name="JP9" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="34.29"/>
-<element name="R25" library="SparkFun-Resistors" package="0603" value="4.7k" x="33.02" y="29.21" rot="R180">
-<attribute name="PROD_ID" value="RES-07857" x="33.02" y="29.21" size="1.778" layer="27" rot="R180" display="off"/>
-</element>
+<element name="R25" library="SparkFun-Resistors" package="0603-RES" value="4.7k" x="33.02" y="29.21" rot="R180"/>
 <element name="R26" library="SparkFun-Resistors" package="0603" value="4.7k" x="17.78" y="31.75">
 <attribute name="PROD_ID" value="RES-07857" x="17.78" y="31.75" size="1.778" layer="27" display="off"/>
 </element>
