@@ -56,7 +56,7 @@
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
 <layer number="51" name="tDocu" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
@@ -215,7 +215,7 @@
 <text x="40.132" y="1.651" size="1.778" layer="22" font="vector" ratio="15" rot="MR0">HIGH VOLTAGE</text>
 <text x="52.959" y="6.223" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">15</text>
 <text x="52.959" y="8.128" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">14</text>
-<text x="52.959" y="10.287" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
+<text x="52.959" y="10.16" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
 <text x="52.959" y="12.065" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">12</text>
 <text x="52.959" y="16.51" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">11</text>
 <text x="52.959" y="18.542" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">10</text>

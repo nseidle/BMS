@@ -56,7 +56,7 @@
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
 <layer number="51" name="tDocu" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
@@ -215,7 +215,7 @@
 <text x="40.132" y="1.651" size="1.778" layer="22" font="vector" ratio="15" rot="MR0">HIGH VOLTAGE</text>
 <text x="52.959" y="6.223" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">15</text>
 <text x="52.959" y="8.128" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">14</text>
-<text x="52.959" y="10.287" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
+<text x="52.959" y="10.16" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
 <text x="52.959" y="12.065" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">12</text>
 <text x="52.959" y="16.51" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">11</text>
 <text x="52.959" y="18.542" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">10</text>
@@ -2138,7 +2138,9 @@ design rules under a new name.</description>
 <element name="JP6" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="36.83"/>
 <element name="JP8" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="39.37"/>
 <element name="JP9" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="34.29"/>
-<element name="R25" library="SparkFun-Resistors" package="0603-RES" value="4.7k" x="33.02" y="29.21" rot="R180"/>
+<element name="R25" library="SparkFun-Resistors" package="0603" value="4.7k" x="33.02" y="29.21" rot="R180">
+<attribute name="PROD_ID" value="RES-07857" x="33.02" y="29.21" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="R26" library="SparkFun-Resistors" package="0603" value="4.7k" x="17.78" y="31.75">
 <attribute name="PROD_ID" value="RES-07857" x="17.78" y="31.75" size="1.778" layer="27" display="off"/>
 </element>
@@ -2151,9 +2153,18 @@ design rules under a new name.</description>
 <attribute name="PROD_ID" value="RES-07863" x="26.67" y="35.56" size="1.778" layer="27" display="off"/>
 <attribute name="VALUE" value="100" x="26.67" y="35.56" size="1.778" layer="27" display="off"/>
 </element>
-<element name="C29" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="34.29" y="34.29" rot="R180"/>
-<element name="C30" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="30.48" y="35.56"/>
-<element name="C31" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="26.67" y="34.29" rot="R180"/>
+<element name="C29" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="34.29" y="34.29" rot="R180">
+<attribute name="PROD_ID" value="CAP-00810" x="34.29" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="VALUE" value="0.1uF" x="34.29" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
+<element name="C30" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="30.48" y="35.56">
+<attribute name="PROD_ID" value="CAP-00810" x="30.48" y="35.56" size="1.778" layer="27" display="off"/>
+<attribute name="VALUE" value="0.1uF" x="30.48" y="35.56" size="1.778" layer="27" display="off"/>
+</element>
+<element name="C31" library="SparkFun-Capacitors" package="0603-CAP" value="0.1uF" x="26.67" y="34.29" rot="R180">
+<attribute name="PROD_ID" value="CAP-00810" x="26.67" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+<attribute name="VALUE" value="0.1uF" x="26.67" y="34.29" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="R29" library="bq769x0" package="4527" value=".001" x="30.48" y="40.64" rot="R180"/>
 <element name="R3" library="SparkFun-Resistors" package="0603-RES" value="100" x="21.59" y="12.7">
 <attribute name="PROD_ID" value="RES-07863" x="21.59" y="12.7" size="1.778" layer="27" display="off"/>

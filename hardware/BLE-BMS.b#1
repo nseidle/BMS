@@ -56,7 +56,7 @@
 <layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
 <layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="no" active="yes"/>
-<layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="49" name="Reference" color="7" fill="1" visible="no" active="yes"/>
 <layer number="50" name="dxf" color="7" fill="1" visible="no" active="no"/>
 <layer number="51" name="tDocu" color="6" fill="1" visible="yes" active="yes"/>
 <layer number="52" name="bDocu" color="7" fill="1" visible="no" active="yes"/>
@@ -215,7 +215,7 @@
 <text x="40.132" y="1.651" size="1.778" layer="22" font="vector" ratio="15" rot="MR0">HIGH VOLTAGE</text>
 <text x="52.959" y="6.223" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">15</text>
 <text x="52.959" y="8.128" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">14</text>
-<text x="52.959" y="10.287" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
+<text x="52.959" y="10.16" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">13</text>
 <text x="52.959" y="12.065" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">12</text>
 <text x="52.959" y="16.51" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">11</text>
 <text x="52.959" y="18.542" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">10</text>
@@ -1717,31 +1717,25 @@ We've spent an enormous amount of time creating and checking these footprints an
 &lt;br&gt;&lt;br&gt;
 You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
 <packages>
-<package name="TACTILE-SWITCH-1101NE">
-<description>Sparkfun SKU# COM-08229</description>
-<wire x1="-3" y1="1.1" x2="-3" y2="-1.1" width="0.127" layer="51"/>
-<wire x1="3" y1="1.1" x2="3" y2="-1.1" width="0.127" layer="51"/>
-<wire x1="-2.75" y1="1.75" x2="-3" y2="1.5" width="0.2032" layer="21" curve="90"/>
-<wire x1="-2.75" y1="1.75" x2="2.75" y2="1.75" width="0.2032" layer="21"/>
-<wire x1="2.75" y1="1.75" x2="3" y2="1.5" width="0.2032" layer="21" curve="-90"/>
-<wire x1="3" y1="-1.5" x2="2.75" y2="-1.75" width="0.2032" layer="21" curve="-90"/>
-<wire x1="2.75" y1="-1.75" x2="-2.75" y2="-1.75" width="0.2032" layer="21"/>
-<wire x1="-3" y1="-1.5" x2="-2.75" y2="-1.75" width="0.2032" layer="21" curve="90"/>
-<wire x1="-3" y1="-1.5" x2="-3" y2="-1.1" width="0.2032" layer="21"/>
-<wire x1="-3" y1="1.1" x2="-3" y2="1.5" width="0.2032" layer="21"/>
-<wire x1="3" y1="1.1" x2="3" y2="1.5" width="0.2032" layer="21"/>
-<wire x1="3" y1="-1.5" x2="3" y2="-1.1" width="0.2032" layer="21"/>
-<wire x1="-1.5" y1="0.75" x2="1.5" y2="0.75" width="0.2032" layer="21"/>
-<wire x1="1.5" y1="-0.75" x2="-1.5" y2="-0.75" width="0.2032" layer="21"/>
-<wire x1="-1.5" y1="-0.75" x2="-1.5" y2="0.75" width="0.2032" layer="21"/>
-<wire x1="1.5" y1="-0.75" x2="1.5" y2="0.75" width="0.2032" layer="21"/>
-<wire x1="-2" y1="0" x2="-1" y2="0" width="0.127" layer="51"/>
-<wire x1="-1" y1="0" x2="0.1" y2="0.5" width="0.127" layer="51"/>
-<wire x1="0.3" y1="0" x2="2" y2="0" width="0.127" layer="51"/>
-<smd name="1" x="-3.15" y="0" dx="2.3" dy="1.6" layer="1" rot="R180"/>
-<smd name="2" x="3.15" y="0" dx="2.3" dy="1.6" layer="1" rot="R180"/>
-<text x="-3" y="2" size="0.762" layer="25">&gt;NAME</text>
-<text x="-3" y="-2.7" size="0.762" layer="27">&gt;VALUE</text>
+<package name="TACTILE-SWITCH-SMD">
+<wire x1="-1.54" y1="-2.54" x2="-2.54" y2="-1.54" width="0.2032" layer="51"/>
+<wire x1="-2.54" y1="-1.24" x2="-2.54" y2="1.27" width="0.2032" layer="21"/>
+<wire x1="-2.54" y1="1.54" x2="-1.54" y2="2.54" width="0.2032" layer="51"/>
+<wire x1="-1.54" y1="2.54" x2="1.54" y2="2.54" width="0.2032" layer="21"/>
+<wire x1="1.54" y1="2.54" x2="2.54" y2="1.54" width="0.2032" layer="51"/>
+<wire x1="2.54" y1="1.24" x2="2.54" y2="-1.24" width="0.2032" layer="21"/>
+<wire x1="2.54" y1="-1.54" x2="1.54" y2="-2.54" width="0.2032" layer="51"/>
+<wire x1="1.54" y1="-2.54" x2="-1.54" y2="-2.54" width="0.2032" layer="21"/>
+<wire x1="1.905" y1="1.27" x2="1.905" y2="0.445" width="0.127" layer="51"/>
+<wire x1="1.905" y1="0.445" x2="2.16" y2="-0.01" width="0.127" layer="51"/>
+<wire x1="1.905" y1="-0.23" x2="1.905" y2="-1.115" width="0.127" layer="51"/>
+<circle x="0" y="0" radius="1.27" width="0.2032" layer="21"/>
+<smd name="1" x="-2.794" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
+<smd name="2" x="2.794" y="1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
+<smd name="3" x="-2.794" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
+<smd name="4" x="2.794" y="-1.905" dx="0.762" dy="1.524" layer="1" rot="R90"/>
+<text x="-0.889" y="1.778" size="0.4064" layer="25">&gt;NAME</text>
+<text x="-0.889" y="-2.032" size="0.4064" layer="27">&gt;Value</text>
 </package>
 <package name="STAND-OFF">
 <description>&lt;b&gt;Stand Off&lt;/b&gt;&lt;p&gt;
@@ -2138,11 +2132,15 @@ design rules under a new name.</description>
 <element name="JP6" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="36.83"/>
 <element name="JP8" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="39.37"/>
 <element name="JP9" library="SparkFun-Connectors" package="1X02" value="M02PTH" x="3.81" y="34.29"/>
-<element name="R25" library="SparkFun-Resistors" package="0603-RES" value="4.7k" x="33.02" y="29.21" rot="R180"/>
+<element name="R25" library="SparkFun-Resistors" package="0603" value="4.7k" x="33.02" y="29.21" rot="R180">
+<attribute name="PROD_ID" value="RES-07857" x="33.02" y="29.21" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="R26" library="SparkFun-Resistors" package="0603" value="4.7k" x="17.78" y="31.75">
 <attribute name="PROD_ID" value="RES-07857" x="17.78" y="31.75" size="1.778" layer="27" display="off"/>
 </element>
-<element name="S1" library="SparkFun-Electromechanical" package="TACTILE-SWITCH-1101NE" value="BOOT" x="11.43" y="46.99" rot="R180"/>
+<element name="S1" library="SparkFun-Electromechanical" package="TACTILE-SWITCH-SMD" value="BOOT" x="11.43" y="46.99" rot="R180">
+<attribute name="PROD_ID" value="SWCH-08247" x="11.43" y="46.99" size="1.778" layer="27" rot="R180" display="off"/>
+</element>
 <element name="R27" library="SparkFun-Resistors" package="0603-RES" value="100" x="34.29" y="35.56" rot="R180">
 <attribute name="PROD_ID" value="RES-07863" x="34.29" y="35.56" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="VALUE" value="100" x="34.29" y="35.56" size="1.778" layer="27" rot="R180" display="off"/>
@@ -2413,7 +2411,7 @@ design rules under a new name.</description>
 <wire x1="19.05" y1="36.83" x2="19.05" y2="43.18" width="0.2032" layer="16"/>
 <wire x1="19.05" y1="43.18" x2="17.78" y2="44.45" width="0.2032" layer="16"/>
 <wire x1="17.78" y1="44.45" x2="16.51" y2="44.45" width="0.2032" layer="16"/>
-<wire x1="14.58" y1="46.99" x2="14.58" y2="45.11" width="0.2032" layer="1"/>
+<wire x1="14.224" y1="45.085" x2="14.58" y2="45.11" width="0.2032" layer="1"/>
 <wire x1="14.58" y1="45.11" x2="15.24" y2="44.45" width="0.2032" layer="1"/>
 <wire x1="15.24" y1="44.45" x2="16.51" y2="44.45" width="0.2032" layer="1"/>
 </signal>
@@ -3077,8 +3075,8 @@ design rules under a new name.</description>
 </signal>
 <signal name="N$32">
 <contactref element="R26" pad="1"/>
-<contactref element="S1" pad="2"/>
-<wire x1="8.28" y1="46.99" x2="8.28" y2="43.79" width="0.2032" layer="1"/>
+<contactref element="S1" pad="3"/>
+<wire x1="14.224" y1="48.895" x2="8.28" y2="43.79" width="0.2032" layer="1"/>
 <wire x1="8.28" y1="43.79" x2="8.89" y2="43.18" width="0.2032" layer="1"/>
 <wire x1="8.89" y1="43.18" x2="17.78" y2="43.18" width="0.2032" layer="1"/>
 <wire x1="17.78" y1="43.18" x2="19.05" y2="41.91" width="0.2032" layer="1"/>

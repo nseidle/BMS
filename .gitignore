@@ -2,6 +2,11 @@
 Thumbs.db
 ehthumbs.db
 
+#Eagle Backup files
+*.s#?
+*.b#?
+*.l#?
+
 # Folder config file
 Desktop.ini
 
