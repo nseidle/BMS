@@ -10,7 +10,7 @@
  
  The bq76940 measures individual cell voltages, coulomb counter, three thermistor temperature sensors, and a bunch of
  other nice features.
-
+ 
  Here's how to hook up the Arduino pins to the bq76940 breakout board
  
  Arduino pin A4 (or SDA) -> bq769x0 SDA
@@ -20,7 +20,7 @@
  GND -> GND
  
  Connecting the ALERT pin is recommended but is not requied. The alert pin will be raised if there is a fault condition.
-
+ 
  TODO:
  Get coulomb counter into global variable that increases after each IRQ
  Establish the direction of counter. Does negative mean we are charging or driving? 
@@ -50,7 +50,7 @@ long lastTime; //Used to blink the status LED
 
 long totalCoulombCount = 0; //Keeps track of overall pack fuel gauage
 
-float cellVoltage[16]; //Keeps track of the cell voltages
+float cellVoltage[NUMBER_OF_CELLS + 1]; //Keeps track of the cell voltages
 
 //GPIO declarations
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -64,12 +64,12 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("bq76940 example");
-  
+
   Wire.begin(); //Start I2C communication
 
-  pinMode(statLED, OUTPUT);
+    pinMode(statLED, OUTPUT);
   digitalWrite(statLED, LOW); //Turn off the LED for now
-  
+
   if(initBQ(2) == false) //Call init with pin 2 (IRQ0) or 3 (IRQ1)
   {
     Serial.println("bq76940 failed to respond - check your wiring");
@@ -82,58 +82,22 @@ void setup()
   }
 
   lastTime = millis();
-  
+
   //Testing
-  Serial.print("gain: ");
-  Serial.print(gain);
-  Serial.println("uV/lsb");
 
-  Serial.print("offset: ");
-  Serial.print(offset);
-  Serial.println("mV");
-  
-  Serial.print("Undervoltage trip: ");
-  Serial.print(readUVtrip());
-  Serial.println("V");
-
-  Serial.print("Overvoltage trip: ");
-  Serial.print(readOVtrip());
-  Serial.println("V");
-
-  writeUVtrip(3.32); //Set undervoltage to 3.32V
-
-  Serial.print("New undervoltage trip: ");
-  Serial.print(readUVtrip());
-  Serial.println("V"); //should print 3.32V
-
-  writeOVtrip(4.27); //Set overvoltage to 4.27V
-
-  Serial.print("New overvoltage trip: ");
-  Serial.print(readOVtrip());
-  Serial.println("V"); //should print 4.27V
-
-  Serial.println();
-
-  //delay(500);
-  
-  //while(1);
-
-  readCellVoltage(2); //Should report a cell value around 3.7V
-  readCellVoltage(15);
-
-  while(1);
+  //  Serial.println();
 
   /*
   readCoulombCounter();
-
-  readTemp(0); //Read the die temperature. Should report something like room Temp
-
-  delay(500);
-  while(1);
-
-  
-  enableBalancing(1, true); //test
-  */
+   
+   readTemp(0); //Read the die temperature. Should report something like room Temp
+   
+   delay(500);
+   while(1);
+   
+   
+   enableBalancing(1, true); //test
+   */
 }
 
 void loop()
@@ -142,18 +106,37 @@ void loop()
   //And blink the status LED
   if(millis() - lastTime > 1000)
   {
-    //for(int i = 0 ; i < NUMBER_OF_CELLS ; i++)
-    //  cellVoltage[i] = readCellVoltage(i);
+    for(int i = 0 ; i < NUMBER_OF_CELLS ; i++)
+      cellVoltage[i] = readCellVoltage(i);
 
     //Toggle stat LED
     if(digitalRead(statLED) == HIGH)
       digitalWrite(statLED, LOW);
     else
-      digitalWrite(statLED, HIGH);    
+    {
+      digitalWrite(statLED, HIGH);
+      displayVoltages();
+    }
+
+    int temp = readTemp(0);
+    Serial.print("Die temp = ");
+    Serial.println(temp);
+
+    float packV = readPackVoltage();
+    Serial.print("PackV = ");
+    Serial.println(packV);
+
+    //Calc the pack voltage by hand?
+    float totalVoltage = 0;
+    for(int i = 0 ; i < NUMBER_OF_CELLS ; i++)
+      totalVoltage += cellVoltage[i];
+    Serial.print("PackV manual = ");
+    Serial.println(totalVoltage);
     
+  
     lastTime = millis();
   }
-  
+
   //For every IRQ event read the flags and update the coulomb counter and other major events
   if(bq769x0_IRQ_Triggered == true)
   {
@@ -162,17 +145,17 @@ void loop()
 
     Serial.print("sysStat: 0x");
     Serial.println(sysStat, HEX);
-    
+
     //Double check that ADC is enabled
-    byte sysVal = registerRead(bq796x0_SYS_CTRL1);
-    if(sysVal & bq796x0_ADC_EN)
-    {
-      Serial.println("ADC Enabled");
-    }
-  
+    //byte sysVal = registerRead(bq796x0_SYS_CTRL1);
+    //if(sysVal & bq796x0_ADC_EN)
+    //{
+    //  Serial.println("ADC Enabled");
+    //}
+
     //We need to write 1s into all the places we want a zero, but not overwrite the 1s we want left alone
     byte sysNew = 0; 
-        
+
     //Check for couloumb counter read
     if(sysStat & bq796x0_CC_READY)
     {
@@ -216,33 +199,33 @@ void loop()
       Serial.println("Over current alert!");
       //sysNew |= bq796x0_OCD; //Clear this status bit by writing a one into this spot
     }
-    
+
     //Update the SYS_STAT with only the ones we want, only these bits will clear to zero
     registerWrite(bq796x0_SYS_STAT, sysNew); //address, value
 
     bq769x0_IRQ_Triggered = false; //Reset flag
   }
-  
+
   if(Serial.available())
   {
     byte incoming = Serial.read();
-    
+
     if(incoming == '1')
     {
       Serial.println("Entering ship mode");
       enterSHIPmode();      
     }
-    
+
   }
-  
+
   //Display cell voltages
-    
-  
+
+
   //Display CC fuel gauge
   //totalCoulomb = readCoulombCounter();
-  
+
   //Display temperatures
-  
+
   //Display any other register info
 }
 
@@ -263,14 +246,21 @@ void bq769x0IRQ()
 boolean initBQ(byte irqPin)
 {
   //Test to see if we have correct I2C communication
-  byte testByte = registerRead(bq796x0_OV_TRIP); //Should be something other than zero on POR
-  if(testByte == 0x00) return false; //Something is very wrong. Check wiring.
-  
+  //byte testByte = registerRead(bq796x0_OV_TRIP); //Should be something other than zero on POR
+  byte testByte = registerRead(bq796x0_ADCGAIN2); //Should be something other than zero on POR
+
+  for(byte x = 0 ; x < 10 && testByte == 0 ; x++)
+  {
+    Serial.print(".");
+    testByte = registerRead(bq796x0_ADCGAIN2);
+    delay(100);
+  }
+  //if(testByte == 0x00) return false; //Something is very wrong. Check wiring.
+
   //"For optimal performance, [CC_CFG] should be programmed to 0x19 upon device startup." page 40
   registerWrite(bq796x0_CC_CFG, 0x19); //address, value
-  
-  //Set any other settings such as OVTrip and UVTrip limits
-  
+
+
   //Double check that ADC is enabled
   byte sysVal = registerRead(bq796x0_SYS_CTRL1);
   if(sysVal & bq796x0_ADC_EN)
@@ -285,7 +275,7 @@ boolean initBQ(byte irqPin)
   sysVal |= bq796x0_CC_EN; //Set the CC_EN bit
   registerWrite(bq796x0_SYS_CTRL2, sysVal); //address, value
   //Serial.println("Coulomb counter enabled");
-    
+
   //Attach interrupt
   pinMode(irqPin, INPUT); //No pull up
 
@@ -303,6 +293,13 @@ boolean initBQ(byte irqPin)
   gain = readGAIN() / (float)1000; //Gain is in uV so this converts it to mV. Example: 0.370mV/LSB
   offset = readADCoffset(); //Offset is in mV. Example: 65mV
 
+  Serial.print("gain: ");
+  Serial.print(gain);
+  Serial.println("uV/LSB");
+
+  Serial.print("offset: ");
+  Serial.print(offset);
+  Serial.println("mV");
 
   //Read the system status register
   byte sysStat = registerRead(bq796x0_SYS_STAT);
@@ -311,7 +308,7 @@ boolean initBQ(byte irqPin)
     Serial.println("Device X Ready Error");
     //Try to clear it
     registerWrite(bq796x0_SYS_STAT, bq796x0_DEVICE_XREADY);
-    
+
     delay(500);
     //Check again  
     byte sysStat = registerRead(bq796x0_SYS_STAT);
@@ -321,7 +318,53 @@ boolean initBQ(byte irqPin)
     }
   }
 
+  //Set any other settings such as OVTrip and UVTrip limits
+  float under = readUVtrip();
+  float over = readOVtrip();
+
+  Serial.print("Undervoltage trip: ");
+  Serial.print(under);
+  Serial.println("V");
+
+  Serial.print("Overvoltage trip: ");
+  Serial.print(over);
+  Serial.println("V");
+
+  if(under != 3.32)
+  {
+    writeUVtrip(3.32); //Set undervoltage to 3.32V
+    Serial.print("New undervoltage trip: ");
+    Serial.print(readUVtrip());
+    Serial.println("V"); //should print 3.32V
+  }
+
+  if(over != 4.27)
+  {
+    writeOVtrip(4.27); //Set overvoltage to 4.27V
+    Serial.print("New overvoltage trip: ");
+    Serial.print(readOVtrip());
+    Serial.println("V"); //should print 4.27V
+  }
+
   return true;
+}
+
+//Pretty print the pack voltages
+void displayVoltages(void)
+{
+  Serial.println("Voltages:");
+
+  for(int i = 1 ; i < NUMBER_OF_CELLS + 1 ; i++)
+  {
+    Serial.print("[");
+    Serial.print(i);
+    Serial.print("]");
+
+    Serial.print(cellVoltage[i], 2);
+    Serial.print(" ");
+
+    if(i % 5 == 0) Serial.println();
+  }
 }
 
 //Enable or disable the balancing of a given cell
@@ -331,7 +374,7 @@ void enableBalancing(byte cellNumber, boolean enabled)
   byte startingBit, cellRegister;
 
   if(cellNumber < 1 || cellNumber > 15) return; //Out of range
-  
+
   if(cellNumber < 6)
   {
     startingBit = 0;
@@ -349,12 +392,12 @@ void enableBalancing(byte cellNumber, boolean enabled)
   }
 
   byte cell = registerRead(cellRegister); //Read what is currently there
-  
+
   if(enabled)
     cell |= (1<<(cellNumber - startingBit)); //Set bit for balancing
   else
     cell &= ~(1<<(cellNumber - startingBit)); //Clear bit to disable balancing
-  
+
   registerWrite(cellRegister, cell); //Make it so
 }
 
@@ -364,19 +407,19 @@ void enterSHIPmode(void)
 {
   //This function is currently untested but should work
   byte sysValue = registerRead(bq796x0_SYS_CTRL1);
-  
+
   sysValue &= 0xFC; //Step 1: 00
   registerWrite(bq796x0_SYS_CTRL1, sysValue);
-  
+
   sysValue |= 0x03; //Step 2: non-01
   registerWrite(bq796x0_SYS_CTRL1, sysValue);
-  
+
   sysValue &= ~(1<<1); //Step 3: 01
   registerWrite(bq796x0_SYS_CTRL1, sysValue);
 
   sysValue = (sysValue & 0xFC) | (1<<1); //Step 4: 10
   registerWrite(bq796x0_SYS_CTRL1, sysValue);
-  
+
   //bq should now be in powered down SHIP mode and will not respond to commands
   //Boot on VS1 required to start IC
 }
@@ -387,33 +430,35 @@ void enterSHIPmode(void)
 float readCellVoltage(byte cellNumber)
 {
   if(cellNumber < 1 || cellNumber > 15) return(-0); //Return error
-  
-  Serial.print("Read cell number: ");
-  Serial.println(cellNumber);
+
+  //Serial.print("Read cell number: ");
+  //Serial.println(cellNumber);
 
   //Reduce the caller's cell number by one so that we get register alignment
   cellNumber--;
-  
+
   byte registerNumber = bq796x0_VC1_HI + (cellNumber * 2);
-  
+
   //Serial.print("register: 0x");
   //Serial.println(registerNumber, HEX);
 
   int cellValue = registerDoubleRead(registerNumber);
-  
+
   //int cellValue = 0x1800; //6,144 - Should return 2.365
   //int cellValue = 0x1F10l; //Should return 3.052
-  
+
   //Cell value should now contain a 14 bit value
 
-  Serial.print("Cell value (dec): ");
-  Serial.println(cellValue);
+  //Serial.print("Cell value (dec): ");
+  //Serial.println(cellValue);
+  
+  if(cellValue == 0) return(0);
 
   float cellVoltage = cellValue * gain + offset; //0x1800 * 0.37 + 60 = 3,397mV
   cellVoltage /= (float)1000;
 
-  Serial.print("Cell voltage: ");
-  Serial.println(cellVoltage, 3);
+  //Serial.print("Cell voltage: ");
+  //Serial.println(cellVoltage, 3);
 
   return(cellVoltage);
 }
@@ -425,12 +470,12 @@ int readTemp(byte thermistorNumber)
 {
   //There are 3 external thermistors (optional) and an internal temp reading (channel 0)
   if(thermistorNumber < 0 || thermistorNumber > 3) return(-0); //Return error
-  
-  Serial.print("Read thermistor number: ");
-  Serial.println(thermistorNumber);
+
+  //Serial.print("Read thermistor number: ");
+  //Serial.println(thermistorNumber);
 
   byte sysValue = registerRead(bq796x0_SYS_CTRL1);
-  
+
   if(thermistorNumber > 0)
   {
     //See if we need to switch between internal die temp and external thermistor
@@ -440,24 +485,26 @@ int readTemp(byte thermistorNumber)
       //Set the TEMP_SEL bit
       sysValue |= bq796x0_TEMP_SEL;
       registerWrite(bq796x0_SYS_CTRL1, sysValue); //address, value
-      
-      Serial.println("Waiting 2 seconds to switch thermistors");
+
+        Serial.println("Waiting 2 seconds to switch thermistors");
       delay(2000);      
     }
-    
+
     int registerNumber = bq796x0_TS1_HI + ((thermistorNumber - 1) * 2);
     int thermValue = registerDoubleRead(registerNumber);
-  
+
     //Therm value should now contain a 14 bit value
-  
+
     Serial.print("Therm value: 0x");
-    Serial.println(thermValue, HEX);
-  
-    float thermVoltage = thermValue * 382; //0x233C * 382uV/LSB = 3,445,640uV
-    float thermResistance = ((float)10000 * thermVoltage) / (3.3 - thermVoltage);
+    Serial.println(thermValue, HEX); //0xC89 = 3209
+
+    float thermVoltage = thermValue * (float)382; //0xC89 * 382 = 1,225,838uV. 0x233C * 382uV/LSB = 3,445,640uV
+    thermVoltage /= (float)1000000; //Convert to V
     
     Serial.print("thermVoltage: ");
-    Serial.println(thermVoltage / (float)1000000, 3);
+    Serial.println(thermVoltage, 3);
+
+    float thermResistance = ((float)10000 * thermVoltage) / (3.3 - thermVoltage);
 
     Serial.print("thermResistance: ");
     Serial.println(thermResistance);
@@ -465,10 +512,10 @@ int readTemp(byte thermistorNumber)
     //We now have thermVoltage and resistance. With a datasheet for the NTC 103AT thermistor we could
     //calculate temperature. 
     int temperatureC = thermistorLookup(thermResistance);
-    
+
     Serial.print("temperatureC: ");
     Serial.println(temperatureC);
-    
+
     return(temperatureC);
   }
   else if(thermistorNumber == 0)
@@ -480,29 +527,36 @@ int readTemp(byte thermistorNumber)
       //Clear the TEMP_SEL bit
       sysValue &= ~(1<<3);
       registerWrite(bq796x0_SYS_CTRL1, sysValue); //address, value
-      
-      Serial.println("Waiting 2 seconds to switch to internal die thermistors");
+
+        Serial.println("Waiting 2 seconds to switch to internal die thermistors");
       delay(2000);      
     }
-    
+
     int thermValue = registerDoubleRead(bq796x0_TS1_HI); //There are multiple internal die temperatures. We are only going to grab 1.
-  
+
     //Therm value should now contain a 14 bit value
-    Serial.print("Therm value: 0x");
-    Serial.println(thermValue, HEX);
-  
-    float thermVoltage = thermValue * 382; //0x233C * 382uV/LSB = 3,445,640uV
-    float temperatureC = 25.0 - ((thermVoltage - 1.2) / 0.0042);
+    //Serial.print("Therm value: 0x");
+    //Serial.println(thermValue, HEX);
+
+    float thermVoltage = thermValue * (float)382; //0xC89 * 382 = 1,225,838uV. 0x233C * 382uV/LSB = 3,445,640uV
+    thermVoltage /= (float)1000000; //Convert to V
     
-    Serial.print("thermVoltage: ");
-    Serial.println(thermVoltage / (float)1000000, 3);
+    //Serial.print("thermVoltage: ");
+    //Serial.println(thermVoltage, 3);
 
-    Serial.print("temperatureC: ");
-    Serial.println(temperatureC);
+    float temperatureC = 25.0 - ((thermVoltage - 1.2) / 0.0042);
 
+    //Serial.print("temperatureC: ");
+    //Serial.println(temperatureC);
+    
+    //float temperatureF = (temperatureC * ((float)9/5)) + 32;
+
+    //Serial.print("temperatureF: ");
+    //Serial.println(temperatureF);
+    
     return((int)temperatureC);
   }
-  
+
 }
 
 //Returns the coulomb counter value in microVolts
@@ -513,9 +567,9 @@ int readTemp(byte thermistorNumber)
 float readCoulombCounter(void)
 {
   int count = registerDoubleRead(bq796x0_CC_HI);
-  
+
   //int count = 0xC350; //Test. Should report -131,123.84
-  
+
   float count_uV = count * 8.44; //count should be naturally in 2's compliment. count_uV is now in uV
 
   return(count_uV);
@@ -525,27 +579,37 @@ float readCoulombCounter(void)
 //Vbat = 4 * GAIN * ADC(cell) + (# of cells * offset)
 float readPackVoltage(void)
 {
-  int packADC = registerDoubleRead(bq796x0_BAT_HI);
+  unsigned int packADC = registerDoubleRead(bq796x0_BAT_HI);
+
+  //Serial.print("packADC = ");
+  //Serial.println(packADC);
+
+  //packADC = 0x6DDA; //28,122 Test. Should report something like 42.520V
   
-  //int packADC = 0x6DDA; //Test. Should report something like 42.520V
-  
-  float packVoltage = 4 * gain * packADC + (NUMBER_OF_CELLS * offset); //Should be in mV
-  
-  return(packVoltage/(float)1000); //Convert to volts
+  //packADC = 35507
+  //gain = 0.38uV/LSB
+  //offset = 47mV
+  //53970 
+  float packVoltage = 4 * gain * packADC; //53970 in uV?
+  packVoltage += (NUMBER_OF_CELLS * offset); //Should be in mV
+
+  return(packVoltage / (float)1000); //Convert to volts
 }
 
 //Reads the gain registers and calculates the system's factory trimmed gain
 //GAIN = 365uV/LSB + (ADCGAIN<4:0>) * 1uV/LSB
+//ADC gain comes from two registers that have to be moved around and combined.
 int readGAIN(void)
 {
   byte val1 = registerRead(bq796x0_ADCGAIN1);
   byte val2 = registerRead(bq796x0_ADCGAIN2);
-  
+  val1 &= 0b00001100; //There are some unknown reservred bits around val1 that need to be cleared
+
   //Recombine the bits into one ADCGAIN
   byte adcGain = (val1 << 1) | (val2 >> 5);
-  
+
   int gain = 365 + adcGain;
-  
+
   return(gain);
 }
 
@@ -555,8 +619,6 @@ int readADCoffset(void)
 {
   //Here we need to convert a 8bit 2's compliment to a 16 bit int
   char offset = registerRead(bq796x0_ADCOFFSET);
-  
-  //char offset = 0x1E; //Test readCell
 
   return((int)offset); //8 bit char is now a full 16-bit int. Easier math later on.
 }
@@ -569,16 +631,16 @@ int readADCoffset(void)
 float readOVtrip(void)
 {
   int trip = registerRead(bq796x0_OV_TRIP);
-  
+
   trip <<= 4; //Shuffle the bits to align to 0b.10.XXXX.XXXX.1000
   trip |= 0x2008;
 
   float overVoltage = ((float)trip * gain) + offset;
   overVoltage /= 1000; //Convert to volts
-  
+
   //Serial.print("overVoltage should be around 4.108: ");
   //Serial.println(overVoltage, 3);
-  
+
   return(overVoltage);
 }
 
@@ -599,16 +661,16 @@ void writeOVtrip(float tripVoltage)
 float readUVtrip(void)
 {
   int trip = registerRead(bq796x0_UV_TRIP);
-  
+
   trip <<= 4; //Shuffle the bits to align to 0b.01.XXXX.XXXX.0000
   trip |= 0x1000;
 
   float underVoltage = ((float)trip * gain) + offset;
   underVoltage /= 1000; //Convert to volts
-  
+
   //Serial.print("underVoltage should be around 2.465: ");
   //Serial.println(underVoltage, 3);
-  
+
   return(underVoltage);
 }
 
@@ -626,7 +688,7 @@ void writeUVtrip(float tripVoltage)
 byte tripCalculator(float tripVoltage)
 {
   tripVoltage *= 1000; //Convert volts to mV
-  
+
   //Serial.print("tripVoltage to be: ");
   //Serial.println(tripVoltage, 3);
 
@@ -634,16 +696,16 @@ byte tripCalculator(float tripVoltage)
   tripVoltage /= gain;
 
   int tripValue = (int)tripVoltage; //We only want the integer - drop decimal portion.
-  
+
   //Serial.print("tripValue should be something like 0x2BC0: ");
   //Serial.println(tripValue, HEX);
-  
+
   tripValue >>= 4; //Cut off lower 4 bits
   tripValue &= 0x00FF; //Cut off higher bits
-  
+
   //Serial.print("About to report tripValue: ");
   //Serial.println(tripValue, HEX);
-  
+
   return(tripValue);
 }
 
@@ -653,7 +715,7 @@ void registerWrite(byte regAddress, byte regData)
   Wire.beginTransmission(bqI2CAddress);
   Wire.write(regAddress);
   Wire.endTransmission();
-  
+
   Wire.beginTransmission(bqI2CAddress);
   Wire.write(regAddress);
   Wire.write(regData);
@@ -664,11 +726,19 @@ void registerWrite(byte regAddress, byte regData)
 byte registerRead(byte regAddress)
 {
   Wire.beginTransmission(bqI2CAddress);
+  //Here's where I2C can time out
   Wire.write(regAddress);
   Wire.endTransmission();
-  
+
   Wire.requestFrom(bqI2CAddress, 1);
   
+  /*byte counter = 0;
+  while(Wire.available() == 0)
+  {
+    delay(1);
+    if(counter++ > 250) return(0); //Return with error
+  }*/
+
   return(Wire.read());
 }
 
@@ -678,19 +748,19 @@ int registerDoubleRead(byte regAddress)
   Wire.beginTransmission(bqI2CAddress);
   Wire.write(regAddress);
   Wire.endTransmission();
-  
+
   Wire.requestFrom(bqI2CAddress, 2);
-  
+
   /*byte counter = 0;
-  while(Wire.available() < 2)
-  {
-    Serial.print(".");
-    if(counter++ > MAX_I2C_TIME)
-    {
-      return(-1); //Time out error
-    }
-    delay(1);
-  }*/
+   while(Wire.available() < 2)
+   {
+   Serial.print(".");
+   if(counter++ > MAX_I2C_TIME)
+   {
+   return(-1); //Time out error
+   }
+   delay(1);
+   }*/
 
   byte reg1 = Wire.read();
   byte reg2 = Wire.read();
@@ -699,10 +769,10 @@ int registerDoubleRead(byte regAddress)
   //Serial.print(reg1, HEX);
   //Serial.print(" reg2: 0x");
   //Serial.println(reg2, HEX);
-  
+
   int combined = (int)reg1 << 8;
   combined |= reg2;
-  
+
   return(combined);
 }
 
@@ -713,9 +783,9 @@ int thermistorLookup(float resistance)
 {
   //Resistance is coming in as Ohms, this lookup table assume kOhm
   resistance /= 1000; //Convert to kOhm
-  
+
   int temp = 0;
-  
+
   if(resistance > 329.5) temp = -50;
   if(resistance > 247.7) temp = -45;
   if(resistance > 188.5) temp = -40;
@@ -733,6 +803,8 @@ int thermistorLookup(float resistance)
   if(resistance > 12.09) temp = 20;
   if(resistance > 10.00) temp = 25;
   if(resistance > 8.313) temp = 30;
-  
+
   return(temp);  
 }
+
+
