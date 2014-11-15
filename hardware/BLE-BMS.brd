@@ -210,7 +210,7 @@
 <text x="11.303" y="38.735" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">TS1</text>
 <text x="11.303" y="36.195" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">TS2</text>
 <text x="11.303" y="33.655" size="1.27" layer="22" font="vector" ratio="15" rot="MR0">TS3</text>
-<text x="10.16" y="1.27" size="1.27" layer="16" font="vector" ratio="20" rot="MR0">V11</text>
+<text x="10.16" y="1.27" size="1.27" layer="16" font="vector" ratio="20" rot="MR0">V2.0</text>
 <text x="63.627" y="5.334" size="1.778" layer="22" font="vector" ratio="15" rot="MR90">Insulate These Connections!</text>
 <text x="64.135" y="62.357" size="1.27" layer="21" font="vector" ratio="15" rot="R90">+</text>
 <text x="3.937" y="62.357" size="1.27" layer="21" font="vector" ratio="15" rot="R90">+</text>
@@ -221,6 +221,7 @@
 <text x="7.62" y="3.81" size="1.778" layer="21" font="vector" ratio="15">bq76940 / E-Bike</text>
 <text x="30.48" y="-21.59" size="1.778" layer="21" font="vector" ratio="15">N. Seidle</text>
 <text x="8.89" y="12.954" size="1.27" layer="21" font="vector" ratio="15">Power</text>
+<text x="0.762" y="8.763" size="1.27" layer="21" font="vector" ratio="15">SJ5</text>
 </plain>
 <libraries>
 <library name="SparkFun-Passives">
